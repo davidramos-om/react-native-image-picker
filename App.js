@@ -1,23 +1,43 @@
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
 import PrimaryButton from './components/PrimaryButton';
+import { pickImageAsync } from './util/images'
 
 const PlaceholderImage = require('./assets/images/1.png');
 
+const onCanceled = () => {
+  alert('You did not select any image.');
+}
+
 export default function App() {
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleSelectImage = async () => {
+    await pickImageAsync({ setSelectedImage, onCanceled });
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <ImageViewer placeholderImageSource={PlaceholderImage} />
+        <ImageViewer
+          placeholderImageSource={PlaceholderImage}
+          selectedImage={selectedImage}
+        />
       </View>
       <View style={styles.footerContainer}>
-        <PrimaryButton label="Choose a photo" />
-        <Button label="Use this photo" />
+        <PrimaryButton
+          label="Choose a photo"
+          onPress={handleSelectImage}
+        />
+        <Button
+          label="Use this photo"
+        />
       </View>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </View>
   );
 }
